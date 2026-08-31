@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Travel4Tech">
+  <title>Travel4Tech</title>
+  <defs>
+    <linearGradient id="t4tFaviconGradient" x1="6%" y1="6%" x2="94%" y2="94%">
+      <stop offset="0%" stop-color="#4286ff" />
+      <stop offset="100%" stop-color="#965ef8" />
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="64" height="64" rx="14" fill="#060c20" />
+
+  <line x1="44" y1="33" x2="22" y2="20" stroke="#4286ff" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round" />
+  <line x1="44" y1="33" x2="20" y2="46" stroke="#4286ff" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round" />
+  <line x1="44" y1="33" x2="46.1" y2="16.9" stroke="#9aa5b8" stroke-opacity="0.45" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="2.6 5" />
+
+  <circle cx="22" cy="20" r="6.4" fill="#f2f5fb" />
+  <circle cx="20" cy="46" r="6.4" fill="#f2f5fb" />
+  <circle cx="47" cy="10" r="3.2" fill="#060c20" stroke="#9aa5b8" stroke-opacity="0.55" stroke-width="1.6" />
+
+  <circle cx="44" cy="33" r="10.5" fill="url(#t4tFaviconGradient)" />
+</svg>

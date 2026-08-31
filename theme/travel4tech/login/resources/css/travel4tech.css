@@ -1,0 +1,170 @@
+/*
+ * Travel4Tech identity for the keywind Keycloak theme.
+ * Loaded after dist/index.css (see theme.properties) so these rules win on
+ * equal specificity. Selectors mirror the compiled Tailwind utility classes
+ * keywind's .ftl templates already reference (bg-primary-600, rounded-lg,
+ * etc.) -- there is no build step in this repo, so we can't regenerate
+ * index.css with a new Tailwind theme; we recolor the classes it already
+ * shipped instead. Hex values are sRGB conversions of the OKLCH tokens in
+ * euro-travel-tech/src/styles.css (Travel4Tech's dark-first design system),
+ * kept in the same light/dark split: light-mode tokens on the white login
+ * card, dark-mode tokens on the page chrome around it.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
+
+:root {
+  --t4t-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --t4t-font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---- page chrome (outside the card) ---- */
+
+.t4t-body {
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(66, 134, 255, 0.35), transparent 60%),
+    radial-gradient(900px 560px at 108% 115%, rgba(150, 94, 248, 0.3), transparent 60%),
+    #060c20;
+  font-family: var(--t4t-font-sans);
+}
+
+.t4t-locale-trigger {
+  color: rgb(154 165 184);
+  transition: color 0.15s ease;
+}
+
+.t4t-locale-trigger:hover {
+  color: rgb(242 245 251);
+}
+
+/* ---- card ---- */
+
+.t4t-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 30px 80px -35px rgba(6, 12, 32, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.t4t-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4286ff, #965ef8);
+}
+
+/* ---- logo + heading ---- */
+
+.t4t-logo-mark {
+  border-radius: 0.625rem;
+  box-shadow: 0 12px 30px -12px rgba(66, 134, 255, 0.55);
+}
+
+.t4t-logo-word {
+  font-family: var(--t4t-font-display);
+  letter-spacing: -0.02em;
+  color: #1e64ef;
+  background-image: linear-gradient(100deg, #1e64ef, #8857e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.t4t-heading {
+  font-family: var(--t4t-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #17203a;
+}
+
+/* ---- radius scale ---- */
+
+.rounded {
+  border-radius: 0.375rem;
+}
+
+.rounded-md {
+  border-radius: 0.625rem;
+}
+
+.rounded-lg {
+  border-radius: 0.875rem;
+}
+
+/* ---- primary (electric blue) ---- */
+
+.bg-primary-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 100 239 / var(--tw-bg-opacity));
+  background-image: linear-gradient(100deg, #4286ff, #965ef8);
+}
+
+.hover\:bg-primary-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 100 239 / var(--tw-bg-opacity));
+  background-image: linear-gradient(100deg, #2f68d1, #7a3fd6);
+}
+
+.text-primary-600 {
+  --tw-text-opacity: 1;
+  color: rgb(30 100 239 / var(--tw-text-opacity));
+}
+
+.hover\:text-primary-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(66 134 255 / var(--tw-text-opacity));
+}
+
+.focus\:border-primary-300:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(111 160 255 / var(--tw-border-opacity));
+}
+
+.focus\:ring-primary-200:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(169 200 255 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-primary-600:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(30 100 239 / var(--tw-ring-opacity));
+}
+
+/* ---- secondary (muted navy) ---- */
+
+.bg-secondary-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(230 235 246 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-secondary-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(230 235 246 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-secondary-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(215 223 240 / var(--tw-bg-opacity));
+}
+
+.border-secondary-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(219 226 243 / var(--tw-border-opacity));
+}
+
+.text-secondary-600 {
+  --tw-text-opacity: 1;
+  color: rgb(87 100 123 / var(--tw-text-opacity));
+}
+
+.hover\:text-secondary-900:hover {
+  --tw-text-opacity: 1;
+  color: rgb(23 32 58 / var(--tw-text-opacity));
+}
+
+.focus\:ring-secondary-600:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(87 100 123 / var(--tw-ring-opacity));
+}

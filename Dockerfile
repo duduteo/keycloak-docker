@@ -18,6 +18,7 @@ ARG KC_HEALTH_ENABLED KC_METRICS_ENABLED KC_FEATURES KC_DB KC_HTTP_ENABLED PROXY
 ADD --chown=keycloak:keycloak https://github.com/klausbetz/apple-identity-provider-keycloak/releases/download/1.7.1/apple-identity-provider-1.7.1.jar /opt/keycloak/providers/apple-identity-provider-1.7.1.jar
 ADD --chown=keycloak:keycloak https://github.com/wadahiro/keycloak-discord/releases/download/v0.5.0/keycloak-discord-0.5.0.jar /opt/keycloak/providers/keycloak-discord-0.5.0.jar
 COPY /theme/keywind /opt/keycloak/themes/keywind
+COPY /theme/travel4tech /opt/keycloak/themes/travel4tech
 COPY cache-ispn.xml /opt/keycloak/conf/cache-ispn.xml
 COPY --from=jgroups-jdbc-ping-builder --chown=keycloak:keycloak /jgroups-jdbc-ping-datasource.jar /opt/keycloak/providers/jgroups-jdbc-ping-datasource.jar
 
