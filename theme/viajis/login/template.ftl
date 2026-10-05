@@ -1,11 +1,37 @@
+<#import "field.ftl" as field>
+<#import "footer.ftl" as loginFooter>
+<#macro username>
+  <#assign label>
+    <#if !realm.loginWithEmailAllowed>${msg("username")}<#elseif !realm.registrationEmailAsUsername>${msg("usernameOrEmail")}<#else>${msg("email")}</#if>
+  </#assign>
+  <@field.group name="username" label=label>
+    <div class="${properties.kcInputGroup}">
+      <div class="${properties.kcInputGroupItemClass} ${properties.kcFill}">
+        <span class="${properties.kcInputClass} ${properties.kcFormReadOnlyClass}">
+          <input id="kc-attempted-username" value="${auth.attemptedUsername}" readonly>
+        </span>
+      </div>
+      <div class="${properties.kcInputGroupItemClass}">
+        <button id="reset-login" class="${properties.kcFormPasswordVisibilityButtonClass} kc-login-tooltip" type="button" 
+              aria-label="${msg('restartLoginTooltip')}" onclick="location.href='${url.loginRestartFlowUrl}'">
+            <i class="fa-sync-alt fas" aria-hidden="true"></i>
+            <span class="kc-tooltip-text">${msg("restartLoginTooltip")}</span>
+        </button>
+      </div>
+    </div>
+  </@field.group>
+</#macro>
+
 <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayRequiredFields=false>
 <!DOCTYPE html>
-<html class="${properties.kcHtmlClass!}"<#if realm.internationalizationEnabled> lang="${locale.currentLanguageTag}"</#if>>
+<html class="${properties.kcHtmlClass!}" lang="${lang}"<#if realm.internationalizationEnabled> dir="${(locale.rtl)?then('rtl','ltr')}"</#if>>
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="robots" content="noindex, nofollow">
+    <meta name="color-scheme" content="light${darkMode?then(' dark', '')}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <#if properties.meta?has_content>
         <#list properties.meta?split(' ') as meta>
@@ -27,155 +53,167 @@
             <link href="${url.resourcesPath}/${style}" rel="stylesheet" />
         </#list>
     </#if>
+    <script type="importmap">
+        {
+            "imports": {
+                "rfc4648": "${url.resourcesCommonPath}/vendor/rfc4648/rfc4648.js"
+            }
+        }
+    </script>
+    <#if darkMode>
+      <script type="module" async blocking="render">
+          const DARK_MODE_CLASS = "${properties.kcDarkModeClass}";
+          const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+          updateDarkMode(mediaQuery.matches);
+          mediaQuery.addEventListener("change", (event) => updateDarkMode(event.matches));
+
+          function updateDarkMode(isEnabled) {
+            const { classList } = document.documentElement;
+
+            if (isEnabled) {
+              classList.add(DARK_MODE_CLASS);
+            } else {
+              classList.remove(DARK_MODE_CLASS);
+            }
+          }
+      </script>
+    </#if>
     <#if properties.scripts?has_content>
         <#list properties.scripts?split(' ') as script>
             <script src="${url.resourcesPath}/${script}" type="text/javascript"></script>
         </#list>
     </#if>
-    <script type="importmap">
-        {
-            "imports": {
-                "rfc4648": "${url.resourcesCommonPath}/node_modules/rfc4648/lib/rfc4648.js"
-            }
-        }
-    </script>
-    <script src="${url.resourcesPath}/js/menu-button-links.js" type="module"></script>
     <#if scripts??>
         <#list scripts as script>
             <script src="${script}" type="text/javascript"></script>
         </#list>
     </#if>
+    <script type="module" src="${url.resourcesPath}/js/passwordVisibility.js"></script>
     <script type="module">
-        import { checkCookiesAndSetTimer } from "${url.resourcesPath}/js/authChecker.js";
+        import { startSessionPolling } from "${url.resourcesPath}/js/authChecker.js";
 
-        checkCookiesAndSetTimer(
-          "${url.ssoLoginInOtherTabsUrl?no_esc}"
+        startSessionPolling(
+            "${url.ssoLoginInOtherTabsUrl?no_esc}"
         );
+    </script>
+    <script type="module">
+        document.addEventListener("click", (event) => {
+            const link = event.target.closest("a[data-once-link]");
+
+            if (!link) {
+                return;
+            }
+
+            if (link.getAttribute("aria-disabled") === "true") {
+                event.preventDefault();
+                return;
+            }
+
+            const { disabledClass } = link.dataset;
+
+            if (disabledClass) {
+                link.classList.add(...disabledClass.trim().split(/\s+/));
+            }
+
+            link.setAttribute("role", "link");
+            link.setAttribute("aria-disabled", "true");
+        });
+    </script>
+    <#if authenticationSession??>
+        <script type="module">
+            import { checkAuthSession } from "${url.resourcesPath}/js/authChecker.js";
+
+            checkAuthSession(
+                "${authenticationSession.authSessionIdHash}"
+            );
+        </script>
+    </#if>
+    <script>
+      // Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1404468
+      const isFirefox = true;
     </script>
 </head>
 
-<body class="${properties.kcBodyClass!}" data-page-id="login-${pageId!}">
+<body id="keycloak-bg" class="${properties.kcBodyClass!}" data-page-id="login-${pageId}">
 <div class="vj-grid">
   <div class="vj-left">
     <div class="vj-left-inner">
       <span class="vj-brand">VIAJIS</span>
       <h1 class="vj-headline">${msg("viajisHeadline")}</h1>
       <p class="vj-lead">${msg("viajisLead")}</p>
+
       <div class="vj-card">
-        <div class="${properties.kcLoginClass!}">
-<div class="${properties.kcFormCardClass!}">
-        <header class="${properties.kcFormHeaderClass!}">
+        <main class="${properties.kcLoginMain!}">
+          <div class="${properties.kcLoginMainHeader!}">
+            <h2 class="vj-card-title" id="kc-page-title"><#nested "header"></h2>
             <#if realm.internationalizationEnabled  && locale.supported?size gt 1>
-                <div class="${properties.kcLocaleMainClass!}" id="kc-locale">
-                    <div id="kc-locale-wrapper" class="${properties.kcLocaleWrapperClass!}">
-                        <div id="kc-locale-dropdown" class="menu-button-links ${properties.kcLocaleDropDownClass!}">
-                            <button tabindex="1" id="kc-current-locale-link" aria-label="${msg("languages")}" aria-haspopup="true" aria-expanded="false" aria-controls="language-switch1">${locale.current}</button>
-                            <ul role="menu" tabindex="-1" aria-labelledby="kc-current-locale-link" aria-activedescendant="" id="language-switch1" class="${properties.kcLocaleListClass!}">
-                                <#assign i = 1>
-                                <#list locale.supported as l>
-                                    <li class="${properties.kcLocaleListItemClass!}" role="none">
-                                        <a role="menuitem" id="language-${i}" class="${properties.kcLocaleItemClass!}" href="${l.url}">${l.label}</a>
-                                    </li>
-                                    <#assign i++>
-                                </#list>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </#if>
-        <#if !(auth?has_content && auth.showUsername() && !auth.showResetCredentials())>
-            <#if displayRequiredFields>
-                <div class="${properties.kcContentWrapperClass!}">
-                    <div class="${properties.kcLabelWrapperClass!} subtitle">
-                        <span class="subtitle"><span class="required">*</span> ${msg("requiredFields")}</span>
-                    </div>
-                    <div class="col-md-10">
-                        <h1 id="kc-page-title"><#nested "header"></h1>
-                    </div>
-                </div>
-            <#else>
-                <h1 id="kc-page-title"><#nested "header"></h1>
-            </#if>
-        <#else>
-            <#if displayRequiredFields>
-                <div class="${properties.kcContentWrapperClass!}">
-                    <div class="${properties.kcLabelWrapperClass!} subtitle">
-                        <span class="subtitle"><span class="required">*</span> ${msg("requiredFields")}</span>
-                    </div>
-                    <div class="col-md-10">
-                        <#nested "show-username">
-                        <div id="kc-username" class="${properties.kcFormGroupClass!}">
-                            <label id="kc-attempted-username">${auth.attemptedUsername}</label>
-                            <a id="reset-login" href="${url.loginRestartFlowUrl}" aria-label="${msg("restartLoginTooltip")}">
-                                <div class="kc-login-tooltip">
-                                    <i class="${properties.kcResetFlowIcon!}"></i>
-                                    <span class="kc-tooltip-text">${msg("restartLoginTooltip")}</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <#else>
-                <#nested "show-username">
-                <div id="kc-username" class="${properties.kcFormGroupClass!}">
-                    <label id="kc-attempted-username">${auth.attemptedUsername}</label>
-                    <a id="reset-login" href="${url.loginRestartFlowUrl}" aria-label="${msg("restartLoginTooltip")}">
-                        <div class="kc-login-tooltip">
-                            <i class="${properties.kcResetFlowIcon!}"></i>
-                            <span class="kc-tooltip-text">${msg("restartLoginTooltip")}</span>
-                        </div>
-                    </a>
-                </div>
-            </#if>
-        </#if>
-      </header>
-      <div id="kc-content">
-        <div id="kc-content-wrapper">
-
-          <#-- App-initiated actions should not see warning messages about the need to complete the action -->
-          <#-- during login.                                                                               -->
-          <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
-              <div class="alert-${message.type} ${properties.kcAlertClass!} pf-m-<#if message.type = 'error'>danger<#else>${message.type}</#if>">
-                  <div class="pf-c-alert__icon">
-                      <#if message.type = 'success'><span class="${properties.kcFeedbackSuccessIcon!}"></span></#if>
-                      <#if message.type = 'warning'><span class="${properties.kcFeedbackWarningIcon!}"></span></#if>
-                      <#if message.type = 'error'><span class="${properties.kcFeedbackErrorIcon!}"></span></#if>
-                      <#if message.type = 'info'><span class="${properties.kcFeedbackInfoIcon!}"></span></#if>
-                  </div>
-                      <span class="${properties.kcAlertTitleClass!}">${kcSanitize(message.summary)?no_esc}</span>
+            <div class="${properties.kcLoginMainHeaderUtilities!}">
+              <div class="${properties.kcInputClass!}">
+                <select aria-label="${msg("languages")}" id="login-select-toggle" onchange="if (this.value) window.location.href=this.value">
+                  <#list locale.supported?sort_by("label") as l>
+                    <option value="${l.url}" ${(l.languageTag == locale.currentLanguageTag)?then('selected','')}>${l.label}</option>
+                  </#list>
+                </select>
               </div>
-          </#if>
+            </div>
+            </#if>
+          </div>
+          <div class="${properties.kcLoginMainBody!}">
+            <#if displayRequiredFields>
+                <div class="${properties.kcContentWrapperClass!}">
+                    <div class="${properties.kcLabelWrapperClass!} subtitle">
+                        <span class="${properties.kcInputHelperTextItemTextClass!}">
+                          <span class="${properties.kcInputRequiredClass!}">*</span> ${msg("requiredFields")}
+                        </span>
+                    </div>
+                </div>
+            </#if>
+            <#if auth?has_content && auth.showUsername() && !auth.showResetCredentials()>
+                <div class="${properties.kcFormClass} ${properties.kcContentWrapperClass}">
+                  <#nested "show-username">
+                  <@username />
+                </div>
+            </#if>
 
-          <#nested "form">
+            <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
+                <div class="vj-alert vj-alert-${message.type}" role="alert">
+                    <span class="${properties.kcAlertTitleClass!} kc-feedback-text">${kcSanitize(message.summary)?no_esc}</span>
+                </div>
+            </#if>
 
-          <#if auth?has_content && auth.showTryAnotherWayLink()>
-              <form id="kc-select-try-another-way-form" action="${url.loginAction}" method="post">
-                  <div class="${properties.kcFormGroupClass!}">
-                      <input type="hidden" name="tryAnotherWay" value="on"/>
-                      <a href="#" id="try-another-way"
-                         onclick="document.forms['kc-select-try-another-way-form'].submit();return false;">${msg("doTryAnotherWay")}</a>
-                  </div>
+            <#nested "form">
+
+            <#if auth?has_content && auth.showTryAnotherWayLink()>
+              <form id="kc-select-try-another-way-form" action="${url.loginAction}" method="post" novalidate="novalidate">
+                  <input type="hidden" name="tryAnotherWay" value="on"/>
+                  <a id="try-another-way" href="javascript:document.forms['kc-select-try-another-way-form'].requestSubmit()"
+                      class="${properties.kcButtonSecondaryClass} ${properties.kcButtonBlockClass} ${properties.kcMarginTopClass}">
+                        ${kcSanitize(msg("doTryAnotherWay"))?no_esc}
+                  </a>
               </form>
-          </#if>
+            </#if>
 
-          <#nested "socialProviders">
-
-          <#if displayInfo>
-              <div id="kc-info" class="${properties.kcSignUpClass!}">
-                  <div id="kc-info-wrapper" class="${properties.kcInfoAreaWrapperClass!}">
-                      <#nested "info">
-                  </div>
-              </div>
-          </#if>
-        </div>
-      </div>
-
-    </div>
-        </div>
+            <div class="${properties.kcLoginMainFooter!}">
+                <#nested "socialProviders">
+                <#if displayInfo>
+                    <div id="kc-info" class="${properties.kcLoginMainFooterBand!} ${properties.kcFormClass}">
+                        <div id="kc-info-wrapper" class="${properties.kcLoginMainFooterBandItem!}">
+                            <#nested "info">
+                        </div>
+                    </div>
+                </#if>
+            </div>
+          </div>
+          <div class="${properties.kcLoginMainFooter!}">
+              <@loginFooter.content/>
+          </div>
+        </main>
       </div>
     </div>
   </div>
-  <div class="vj-right">
+
+  <div class="vj-right" aria-hidden="false">
     <img class="vj-right-img" src="${url.resourcesPath}/img/japao-capa.jpg" alt="" aria-hidden="true" />
     <div class="vj-right-overlay" aria-hidden="true"></div>
     <div class="vj-right-content">

@@ -19,6 +19,8 @@ RAILNET0_IPV6=$(grep ' railnet0$' /proc/net/if_inet6 2>/dev/null | grep ' 00 80 
 if [ -n "$RAILNET0_IPV6" ]; then
   RAILNET0_IPV6=$(echo "$RAILNET0_IPV6" | sed -E 's/(.{4})/\1:/g; s/:$//')
   export RAILNET0_IPV6
+  # O stack jdbc-ping nativo do Keycloak 26 lê o endereço de bind da propriedade jgroups.bind.address.
+  export JAVA_OPTS_APPEND="${JAVA_OPTS_APPEND:-} -Djgroups.bind.address=${RAILNET0_IPV6}"
 fi
 
 exec /opt/keycloak/bin/kc.sh "$@"
