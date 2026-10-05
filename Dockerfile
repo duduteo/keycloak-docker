@@ -19,6 +19,7 @@ ADD --chown=keycloak:keycloak https://github.com/klausbetz/apple-identity-provid
 ADD --chown=keycloak:keycloak https://github.com/wadahiro/keycloak-discord/releases/download/v0.5.0/keycloak-discord-0.5.0.jar /opt/keycloak/providers/keycloak-discord-0.5.0.jar
 COPY /theme/keywind /opt/keycloak/themes/keywind
 COPY /theme/travel4tech /opt/keycloak/themes/travel4tech
+COPY /theme/viajis /opt/keycloak/themes/viajis
 COPY cache-ispn.xml /opt/keycloak/conf/cache-ispn.xml
 COPY --from=jgroups-jdbc-ping-builder --chown=keycloak:keycloak /jgroups-jdbc-ping-datasource.jar /opt/keycloak/providers/jgroups-jdbc-ping-datasource.jar
 
