@@ -23,9 +23,4 @@ if [ -n "$RAILNET0_IPV6" ]; then
   export JAVA_OPTS_APPEND="${JAVA_OPTS_APPEND:-} -Djgroups.bind.address=${RAILNET0_IPV6}"
 fi
 
-/opt/keycloak/bin/kc.sh "$@"
-code=$?
-echo "[entrypoint] kc.sh terminou com código $code"
-for f in memory.max memory.current memory.events; do echo "[entrypoint] cgroup $f: $(cat /sys/fs/cgroup/$f 2>/dev/null | tr '\n' ' ')"; done
-echo "[entrypoint] ulimit: $(ulimit -a | tr '\n' ';')"
-exit $code
+exec /opt/keycloak/bin/kc.sh "$@"
