@@ -119,3 +119,6 @@ html.viajis-login, html.viajis-login body {
 }
 .vj-bullets { margin: 0; padding: 0; list-style: none; font-size: 0.875rem; opacity: .8; }
 .vj-bullets li + li { margin-top: 0.5rem; }
+
+/* Botões dentro de .pf-v5-c-form__actions herdam margem do PatternFly e saem desalinhados */
+.vj-card .pf-v5-c-form__actions > * { margin: 0; }
