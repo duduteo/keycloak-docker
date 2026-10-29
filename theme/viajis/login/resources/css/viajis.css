@@ -30,6 +30,10 @@ html.viajis-login, html.viajis-login body {
 @media (min-width: 640px) { .vj-left { padding-left: 2.5rem; padding-right: 2.5rem; } }
 .vj-left-inner { width: 100%; max-width: 28rem; }
 .vj-brand { font-size: 1.25rem; line-height: 1.75rem; font-weight: 800; letter-spacing: 0.22em; color: var(--vj-primary); }
+/* A marca da agência do endereço (organização do Keycloak): o logotipo e o nome no lugar de «VIAJIS». */
+.vj-agency { display: flex; align-items: center; gap: 0.75rem; min-height: 1.75rem; }
+.vj-agency-logo { display: block; max-height: 3rem; max-width: 12rem; width: auto; height: auto; object-fit: contain; }
+.vj-agency-name { font-family: var(--vj-font-display); font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: var(--vj-foreground); }
 .vj-headline {
   margin: 2rem 0 0; font-family: var(--vj-font-display); font-size: 1.875rem; line-height: 1.25;
   font-weight: 700; letter-spacing: -0.015em; color: var(--vj-foreground);
@@ -95,10 +99,11 @@ html.viajis-login, html.viajis-login body {
 .vj-card .pf-v5-c-button.pf-m-primary { background: var(--vj-primary); color: var(--vj-primary-foreground); }
 .vj-card .pf-v5-c-button.pf-m-primary:hover { background: var(--vj-primary-600); }
 .vj-card .pf-v5-c-button.pf-m-primary:disabled { opacity: .5; cursor: not-allowed; }
-.vj-card .pf-v5-c-button.pf-m-secondary, .vj-card .pf-v5-c-button.pf-m-control {
+/* pf-m-tertiary: os botões dos fornecedores de identidade (Office 365) a partir da 26.8, com o mesmo aspeto dos secundários. */
+.vj-card .pf-v5-c-button.pf-m-secondary, .vj-card .pf-v5-c-button.pf-m-tertiary, .vj-card .pf-v5-c-button.pf-m-control {
   background: var(--vj-surface); color: var(--vj-foreground); border-color: var(--vj-input);
 }
-.vj-card .pf-v5-c-button.pf-m-secondary:hover, .vj-card .pf-v5-c-button.pf-m-control:hover { background: var(--vj-muted); }
+.vj-card .pf-v5-c-button.pf-m-secondary:hover, .vj-card .pf-v5-c-button.pf-m-tertiary:hover, .vj-card .pf-v5-c-button.pf-m-control:hover { background: var(--vj-muted); }
 .vj-card .pf-v5-c-button.pf-m-control { min-height: 2.5rem; width: 2.5rem; padding: 0; }
 
 /* Alertas */

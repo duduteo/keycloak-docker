@@ -1,5 +1,6 @@
 <#import "field.ftl" as field>
 <#import "footer.ftl" as loginFooter>
+<#import "theme-resources.ftl" as themeResourceTags>
 <#macro username>
   <#assign label>
     <#if !realm.loginWithEmailAllowed>${msg("username")}<#elseif !realm.registrationEmailAsUsername>${msg("usernameOrEmail")}<#else>${msg("email")}</#if>
@@ -43,12 +44,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" />
-    <#if properties.stylesCommon?has_content>
+    <#if themeResources?? && themeResources.stylesCommon?has_content>
+        <@themeResourceTags.renderStyles themeResources.stylesCommon url.resourcesCommonPath />
+    <#elseif properties.stylesCommon?has_content>
         <#list properties.stylesCommon?split(' ') as style>
             <link href="${url.resourcesCommonPath}/${style}" rel="stylesheet" />
         </#list>
     </#if>
-    <#if properties.styles?has_content>
+    <#if themeResources?? && themeResources.styles?has_content>
+        <@themeResourceTags.renderStyles themeResources.styles url.resourcesPath />
+    <#elseif properties.styles?has_content>
         <#list properties.styles?split(' ') as style>
             <link href="${url.resourcesPath}/${style}" rel="stylesheet" />
         </#list>
@@ -62,7 +67,8 @@
     </script>
     <#if darkMode>
       <script type="module" async blocking="render">
-          const DARK_MODE_CLASS = "${properties.kcDarkModeClass}";
+          <#outputformat "JavaScript">
+          const DARK_MODE_CLASS = ${properties.kcDarkModeClass?c};
           const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
           updateDarkMode(mediaQuery.matches);
@@ -77,9 +83,12 @@
               classList.remove(DARK_MODE_CLASS);
             }
           }
+          </#outputformat>
       </script>
     </#if>
-    <#if properties.scripts?has_content>
+    <#if themeResources?? && themeResources.scripts?has_content>
+        <@themeResourceTags.renderScripts themeResources.scripts url.resourcesPath "text/javascript" />
+    <#elseif properties.scripts?has_content>
         <#list properties.scripts?split(' ') as script>
             <script src="${url.resourcesPath}/${script}" type="text/javascript"></script>
         </#list>
@@ -91,11 +100,13 @@
     </#if>
     <script type="module" src="${url.resourcesPath}/js/passwordVisibility.js"></script>
     <script type="module">
-        import { startSessionPolling } from "${url.resourcesPath}/js/authChecker.js";
+        <#outputformat "JavaScript">
+        import { startSessionPolling } from ${(url.resourcesPath + "/js/authChecker.js")?c};
 
         startSessionPolling(
-            "${url.ssoLoginInOtherTabsUrl?no_esc}"
+            ${url.ssoLoginInOtherTabsUrl?c}
         );
+        </#outputformat>
     </script>
     <script type="module">
         document.addEventListener("click", (event) => {
@@ -122,11 +133,13 @@
     </script>
     <#if authenticationSession??>
         <script type="module">
-            import { checkAuthSession } from "${url.resourcesPath}/js/authChecker.js";
+             <#outputformat "JavaScript">
+            import { checkAuthSession } from ${(url.resourcesPath + "/js/authChecker.js")?c};
 
             checkAuthSession(
-                "${authenticationSession.authSessionIdHash}"
+                ${authenticationSession.authSessionIdHash?c}
             );
+            </#outputformat>
         </script>
     </#if>
     <script>
@@ -139,7 +152,20 @@
 <div class="vj-grid">
   <div class="vj-left">
     <div class="vj-left-inner">
+      <#-- A marca da agência do endereço (marca-agencia-login D1-11): a organização do Keycloak que o Viajis sincroniza. Sem ela, «VIAJIS» como sempre. -->
+      <#assign vjAgencyName = (org.attributes["viajis_nome"][0])!"">
+      <#assign vjAgencyLogo = (org.attributes["viajis_logotipo"][0])!"">
+      <#if !vjAgencyLogo?starts_with("https://")><#assign vjAgencyLogo = ""></#if>
+      <#if vjAgencyName?has_content || vjAgencyLogo?has_content>
+      <div class="vj-agency">
+        <#-- Um logotipo que não carrega sai; sem nome da agência, volta «VIAJIS» (a marca nunca fica vazia). -->
+        <#if vjAgencyLogo?has_content><img class="vj-agency-logo" src="${vjAgencyLogo}" alt="" onerror="var m=this.closest('.vj-left-inner');this.remove();if(!m.querySelector('.vj-agency-name'))m.querySelector('.vj-brand').hidden=false;" /></#if>
+        <#if vjAgencyName?has_content><span class="vj-agency-name">${vjAgencyName}</span></#if>
+      </div>
+      <span class="vj-brand" hidden>VIAJIS</span>
+      <#else>
       <span class="vj-brand">VIAJIS</span>
+      </#if>
       <h1 class="vj-headline">${msg("viajisHeadline")}</h1>
       <p class="vj-lead">${msg("viajisLead")}</p>
 
@@ -178,7 +204,7 @@
 
             <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
                 <div class="vj-alert vj-alert-${message.type}" role="alert">
-                    <span class="${properties.kcAlertTitleClass!} kc-feedback-text">${kcSanitize(message.summary)?no_esc}</span>
+                    <span class="${properties.kcAlertTitleClass!} kc-feedback-text">${message.summary}</span>
                 </div>
             </#if>
 
@@ -189,10 +215,11 @@
                   <input type="hidden" name="tryAnotherWay" value="on"/>
                   <a id="try-another-way" href="javascript:document.forms['kc-select-try-another-way-form'].requestSubmit()"
                       class="${properties.kcButtonSecondaryClass} ${properties.kcButtonBlockClass} ${properties.kcMarginTopClass}">
-                        ${kcSanitize(msg("doTryAnotherWay"))?no_esc}
+                        ${msg("doTryAnotherWay")}
                   </a>
               </form>
             </#if>
+
 
             <div class="${properties.kcLoginMainFooter!}">
                 <#nested "socialProviders">
