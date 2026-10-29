@@ -222,7 +222,11 @@
 
 
             <div class="${properties.kcLoginMainFooter!}">
+                <#-- Uma agência que só entra com email e senha (atributo login_apenas_senha=true na organização, posto à mão no Keycloak) não vê os
+                     botões dos fornecedores de identidade, como o Office 365. A sincronização do Viajis não mexe neste atributo. -->
+                <#if ((org.attributes["login_apenas_senha"][0])!"") != "true">
                 <#nested "socialProviders">
+                </#if>
                 <#if displayInfo>
                     <div id="kc-info" class="${properties.kcLoginMainFooterBand!} ${properties.kcFormClass}">
                         <div id="kc-info-wrapper" class="${properties.kcLoginMainFooterBandItem!}">
