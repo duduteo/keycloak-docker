@@ -162,6 +162,10 @@
 <#assign vjAgencyName = (org.attributes["viajis_nome"][0])!"">
 <#assign vjAgencyLogo = (org.attributes["viajis_logotipo"][0])!"">
 <#if !vjAgencyLogo?starts_with("https://")><#assign vjAgencyLogo = ""></#if>
+<#-- A imagem ao lado do formulário (Fase 2, D2-6): a da agência quando existe e é https; sem ela, a do Viajis. -->
+<#assign vjDefaultImage = url.resourcesPath + "/img/japao-capa.jpg">
+<#assign vjSideImage = (org.attributes["viajis_imagem_login"][0])!"">
+<#if !vjSideImage?starts_with("https://")><#assign vjSideImage = ""></#if>
 <#assign vjAgency = vjAgencyName?has_content || vjAgencyLogo?has_content>
 <div class="vj-grid">
   <div class="vj-left">
@@ -261,7 +265,13 @@
   </div>
 
   <aside class="vj-right" aria-hidden="true">
-    <img class="vj-right-img" src="${url.resourcesPath}/img/japao-capa.jpg" alt="" />
+    <#-- loading="lazy": abaixo de 1024px o painel está escondido e a imagem (até 5 MB) não se descarrega. -->
+    <#if vjSideImage?has_content>
+    <#-- Uma imagem da agência que não carrega dá lugar à do Viajis (o painel nunca fica vazio). -->
+    <img class="vj-right-img" src="${vjSideImage}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${vjDefaultImage}';" />
+    <#else>
+    <img class="vj-right-img" src="${vjDefaultImage}" alt="" loading="lazy" />
+    </#if>
     <div class="vj-right-overlay"></div>
     <div class="vj-right-content">
       <p class="vj-right-headline">${msg("viajisHeadline")}</p>
