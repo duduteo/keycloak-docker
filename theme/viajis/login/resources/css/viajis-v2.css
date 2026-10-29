@@ -1,6 +1,6 @@
 /* Tema Viajis — tokens de viajisflow.fe.client/src/styles.css.
-   O nome do ficheiro leva uma versão (viajis-v2.css): o Keycloak serve os recursos do tema com cache de 30 dias e, durante a troca de instância
-   num deploy, a instância antiga pode servir o CSS antigo no endereço novo. Ao mudar este ficheiro, sobe-se o sufixo (e o theme.properties). */
+   O nome do ficheiro leva uma versão (viajis-v2.css): o Keycloak serve os recursos do tema com cache de 30 dias, num endereço
+   (/resources/<versão>/…) que não muda entre deploys da mesma versão do Keycloak. Ao mudar o aspeto, sobe-se o sufixo (e o theme.properties). */
 :root {
   --vj-background: oklch(0.985 0.008 260);
   --vj-surface: oklch(1 0 0);
