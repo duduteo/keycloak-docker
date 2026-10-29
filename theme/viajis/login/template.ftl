@@ -241,6 +241,15 @@
           </div>
         </main>
       </div>
+      <#-- Nas páginas com a marca de uma agência, a assinatura da plataforma: «powered by Viajis» e o logotipo da Travel4Tech. -->
+      <#if vjAgencyName?has_content || vjAgencyLogo?has_content>
+      <div class="vj-powered">
+        <span>powered by</span>
+        <span class="vj-powered-viajis">VIAJIS</span>
+        <span class="vj-powered-sep" aria-hidden="true"></span>
+        <span class="vj-powered-t4t"><img src="${url.resourcesPath}/img/travel4tech.svg" alt="" /><span class="vj-powered-t4t-word">Travel4Tech</span></span>
+      </div>
+      </#if>
     </div>
   </div>
 
