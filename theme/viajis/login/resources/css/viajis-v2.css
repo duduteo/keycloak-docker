@@ -1,0 +1,175 @@
+/* Tema Viajis — tokens de viajisflow.fe.client/src/styles.css.
+   O nome do ficheiro leva uma versão (viajis-v2.css): o Keycloak serve os recursos do tema com cache de 30 dias e, durante a troca de instância
+   num deploy, a instância antiga pode servir o CSS antigo no endereço novo. Ao mudar este ficheiro, sobe-se o sufixo (e o theme.properties). */
+:root {
+  --vj-background: oklch(0.985 0.008 260);
+  --vj-surface: oklch(1 0 0);
+  --vj-foreground: oklch(0.2 0.05 268);
+  --vj-muted: oklch(0.95 0.012 262);
+  --vj-muted-foreground: oklch(0.5 0.04 262);
+  --vj-subtle-foreground: oklch(0.6 0.03 262);
+  --vj-border: oklch(0.2 0.05 268 / 10%);
+  --vj-input: oklch(0.2 0.05 268 / 18%);
+  --vj-primary: oklch(0.55 0.22 262);
+  --vj-primary-600: oklch(0.5 0.22 262);
+  --vj-primary-foreground: oklch(0.99 0.005 260);
+  --vj-navy: oklch(0.201 0.044 267);
+  --vj-destructive: oklch(0.58 0.22 25);
+  --vj-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --vj-font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --vj-ring: 0 0 0 3px color-mix(in oklch, var(--vj-primary) 18%, transparent);
+}
+
+html.viajis-login, html.viajis-login body {
+  margin: 0; min-height: 100vh;
+  background: var(--vj-surface); color: var(--vj-foreground);
+  font-family: var(--vj-font-sans); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.viajis-login *, .viajis-login *::before, .viajis-login *::after { box-sizing: border-box; }
+
+/* Grelha: uma coluna no telemóvel e no tablet; a partir de 1024px, o formulário à esquerda e a imagem à direita. */
+.vj-grid { display: grid; min-height: 100vh; grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .vj-grid { grid-template-columns: minmax(28rem, 5fr) 7fr; } }
+
+/* Coluna do formulário: marca em cima, formulário ao centro, assinatura e idioma em baixo. */
+.vj-left { display: flex; flex-direction: column; min-height: 100vh; padding: 1.5rem 1.25rem; background: var(--vj-surface); }
+@media (min-width: 640px) { .vj-left { padding: 2.5rem 3rem; } }
+.vj-top { display: flex; align-items: center; min-height: 2.75rem; }
+.vj-form-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2.5rem 0; }
+.vj-bottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+/* Marca da agência: o logotipo e o nome. */
+.vj-agency { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.vj-agency-logo { display: block; height: 2.75rem; width: auto; max-width: 10rem; object-fit: contain; border-radius: 0.5rem; }
+.vj-agency-name {
+  font-family: var(--vj-font-display); font-size: 1.125rem; line-height: 1.5rem; font-weight: 700; letter-spacing: -0.01em; color: var(--vj-foreground);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Lockup do Viajis (como na barra lateral da aplicação): o símbolo da Travel4Tech, «VIAJIS» e «by Travel4Tech». */
+.vj-lockup { display: inline-flex; align-items: center; gap: 0.625rem; }
+.vj-lockup-mark { display: block; flex-shrink: 0; border-radius: 0.5rem; }
+.vj-lockup-lg .vj-lockup-mark { width: 2.25rem; height: 2.25rem; border-radius: 0.625rem; box-shadow: 0 8px 20px -10px rgba(30, 100, 239, 0.6); }
+.vj-lockup-sm { gap: 0.5rem; }
+.vj-lockup-sm .vj-lockup-mark { width: 1.375rem; height: 1.375rem; border-radius: 0.375rem; }
+.vj-lockup-text { display: flex; flex-direction: column; line-height: 1.1; }
+.vj-lockup-name { font-weight: 800; letter-spacing: 0.18em; color: var(--vj-foreground); }
+.vj-lockup-lg .vj-lockup-name { font-size: 1rem; }
+.vj-lockup-sm .vj-lockup-name { font-size: 0.75rem; }
+.vj-lockup-by { font-size: 0.625rem; font-weight: 500; letter-spacing: 0.02em; color: var(--vj-muted-foreground); }
+
+/* Rodapé: assinatura da plataforma e idioma. */
+.vj-powered { display: inline-flex; align-items: center; gap: 0.625rem; }
+.vj-powered-label { font-size: 0.75rem; color: var(--vj-subtle-foreground); }
+.vj-locale { position: relative; display: inline-flex; align-items: center; color: var(--vj-muted-foreground); margin-left: auto; }
+.vj-locale select {
+  appearance: none; -webkit-appearance: none; border: 0; background: transparent; cursor: pointer;
+  font: inherit; font-size: 0.8125rem; color: inherit; padding: 0.375rem 1.25rem 0.375rem 0.5rem; border-radius: 0.375rem;
+}
+.vj-locale select:hover { background: var(--vj-muted); color: var(--vj-foreground); }
+.vj-locale select:focus-visible { outline: 0; box-shadow: var(--vj-ring); }
+.vj-locale-chevron { position: absolute; right: 0.375rem; pointer-events: none; }
+
+/* Formulário: sem caixa, sobre a página. */
+.vj-card { width: 100%; max-width: 24rem; }
+.vj-card-title {
+  margin: 0; font-family: var(--vj-font-display); font-size: 1.75rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(--vj-foreground);
+}
+.vj-lead { margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--vj-muted-foreground); text-wrap: pretty; }
+
+/* Reset do PatternFly */
+.vj-card.pf-v5-c-login__main, .vj-card { background: none; box-shadow: none; margin: 0; padding: 0; align-self: center; }
+.vj-card .pf-v5-c-login__main-header { padding: 0 0 1.75rem; display: block; border: 0; }
+.vj-card .pf-v5-c-login__main-body { padding: 0; }
+.vj-card .pf-v5-c-login__main-footer { padding: 0; }
+.vj-card .pf-v5-c-login__main-footer-band { background: none; border: 0; padding: 1.25rem 0 0; text-align: center; color: var(--vj-muted-foreground); }
+.vj-card .pf-v5-c-form { display: grid; gap: 1.125rem; }
+.vj-card .pf-v5-c-form__group { display: grid; gap: 0.5rem; min-width: 0; }
+/* O Keycloak deixa grupos e contentores de erro vazios no formulário: sem conteúdo, não ocupam espaço. */
+.vj-card .pf-v5-c-form__group:not(:has(*)), .vj-card [id^="input-error-container"]:not(:has(*)),
+.vj-card .pf-v5-c-form__helper-text:not(:has(.pf-v5-c-helper-text > *)) { display: none; }
+.vj-card .pf-v5-c-form__group-label { padding: 0; }
+.vj-card .pf-v5-c-form__label, .vj-card .pf-v5-c-form__label-text { font-size: 0.875rem; font-weight: 500; line-height: 1; color: var(--vj-foreground); }
+.vj-card .pf-v5-c-form__actions { padding: 0; margin: 0.25rem 0 0; display: block; }
+.vj-card .pf-v5-c-form__actions > * { margin: 0; }
+
+/* Campos: 44px de altura (alvo de toque), cantos de 8px. */
+.vj-card .pf-v5-c-form-control {
+  display: flex; align-items: center; width: 100%; min-width: 0; height: 2.75rem; padding: 0 0.875rem;
+  border: 1px solid var(--vj-input); border-radius: 0.5rem; background: var(--vj-surface);
+  color: var(--vj-foreground); font-size: 0.9375rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: border-color .15s, box-shadow .15s;
+}
+.vj-card .pf-v5-c-form-control::before, .vj-card .pf-v5-c-form-control::after { display: none; }
+.vj-card .pf-v5-c-form-control:hover { border-color: color-mix(in oklch, var(--vj-primary-600) 45%, transparent); }
+.vj-card .pf-v5-c-form-control:focus-within { border-color: var(--vj-primary-600); box-shadow: var(--vj-ring); }
+.vj-card .pf-v5-c-form-control input, .vj-card .pf-v5-c-form-control select {
+  width: 100%; height: 100%; border: 0; outline: 0; background: transparent; padding: 0; font: inherit; color: inherit;
+}
+.vj-card .pf-v5-c-form-control input::placeholder { color: var(--vj-subtle-foreground); }
+.vj-card .pf-v5-c-form-control.pf-m-error { border-color: var(--vj-destructive); box-shadow: 0 0 0 3px color-mix(in oklch, var(--vj-destructive) 15%, transparent); }
+.vj-card .pf-v5-c-form-control.pf-m-readonly { background: var(--vj-muted); border-color: transparent; box-shadow: none; }
+.vj-card .pf-v5-c-input-group { display: flex; gap: 0.5rem; align-items: stretch; }
+.vj-card .pf-v5-c-input-group__item.pf-m-fill { flex: 1; min-width: 0; }
+.vj-card .pf-v5-c-helper-text { display: flex; justify-content: space-between; gap: 0.5rem; margin-top: 0.375rem; font-size: 0.8125rem; }
+.vj-card .pf-v5-c-helper-text__item-text, .vj-card .kc-feedback-text.pf-m-error { color: var(--vj-destructive); }
+.vj-card a { color: var(--vj-primary); text-decoration: none; font-weight: 500; }
+.vj-card a:hover { text-decoration: underline; }
+.vj-card .pf-v5-c-check { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+
+/* Botões: 44px, cantos de 8px. */
+.vj-card .pf-v5-c-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem;
+  min-height: 2.75rem; padding: 0 1rem; border-radius: 0.5rem; border: 1px solid transparent;
+  font: inherit; font-size: 0.9375rem; font-weight: 600; cursor: pointer; text-decoration: none;
+  transition: background-color .15s, border-color .15s, box-shadow .15s;
+}
+.vj-card .pf-v5-c-button::before, .vj-card .pf-v5-c-button::after { display: none; }
+.vj-card .pf-v5-c-button:focus-visible { outline: 0; box-shadow: var(--vj-ring); }
+.vj-card .pf-v5-c-button.pf-m-block { width: 100%; }
+.vj-card .pf-v5-c-button.pf-m-primary { background: var(--vj-primary); color: var(--vj-primary-foreground); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 16px -8px rgba(30, 100, 239, 0.55); }
+.vj-card .pf-v5-c-button.pf-m-primary:hover { background: var(--vj-primary-600); }
+.vj-card .pf-v5-c-button.pf-m-primary:disabled { opacity: .5; cursor: not-allowed; }
+/* pf-m-tertiary: os botões dos fornecedores de identidade (Office 365) a partir da 26.8, com o aspeto dos secundários. */
+.vj-card .pf-v5-c-button.pf-m-secondary, .vj-card .pf-v5-c-button.pf-m-tertiary, .vj-card .pf-v5-c-button.pf-m-control {
+  background: var(--vj-surface); color: var(--vj-foreground); border-color: var(--vj-input); font-weight: 500;
+}
+.vj-card .pf-v5-c-button.pf-m-secondary:hover, .vj-card .pf-v5-c-button.pf-m-tertiary:hover, .vj-card .pf-v5-c-button.pf-m-control:hover { background: var(--vj-muted); }
+.vj-card .pf-v5-c-button.pf-m-control { min-height: 2.75rem; width: 2.75rem; padding: 0; }
+.vj-card #kc-social-providers img, .vj-card #kc-social-providers svg { width: 1.125rem; height: 1.125rem; }
+
+/* Alertas */
+.vj-alert { margin-bottom: 1.125rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; font-size: 0.875rem; border: 1px solid var(--vj-border); background: var(--vj-muted); }
+.vj-alert-error { color: var(--vj-destructive); border-color: color-mix(in oklch, var(--vj-destructive) 35%, transparent); background: color-mix(in oklch, var(--vj-destructive) 7%, white); }
+.vj-alert-success { border-color: color-mix(in oklch, oklch(0.6 0.15 155) 35%, transparent); background: color-mix(in oklch, oklch(0.6 0.15 155) 8%, white); }
+
+/* Painel da imagem: a foto à vista, com um gradiente navy só onde está o texto. */
+.vj-right { position: relative; display: none; overflow: hidden; background: var(--vj-navy); margin: 0.75rem 0.75rem 0.75rem 0; border-radius: 1.25rem; }
+@media (min-width: 1024px) { .vj-right { display: flex; } }
+.vj-right-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vj-right-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to top, color-mix(in oklch, var(--vj-navy) 92%, transparent) 0%, color-mix(in oklch, var(--vj-navy) 55%, transparent) 38%, transparent 70%),
+    linear-gradient(135deg, color-mix(in oklch, var(--vj-primary) 28%, transparent), transparent 55%);
+}
+.vj-right-content {
+  position: relative; display: flex; width: 100%; flex-direction: column; justify-content: flex-end;
+  padding: 3.5rem; color: var(--vj-primary-foreground);
+}
+.vj-right-headline {
+  margin: 0; max-width: 34rem; font-family: var(--vj-font-display); font-size: 2rem; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance;
+}
+.vj-bullets { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.625rem; font-size: 0.9375rem; }
+.vj-bullets li { display: flex; align-items: center; gap: 0.625rem; color: color-mix(in oklch, var(--vj-primary-foreground) 88%, transparent); }
+.vj-bullets svg { flex-shrink: 0; padding: 2px; border-radius: 999px; background: color-mix(in oklch, var(--vj-primary-foreground) 16%, transparent); width: 1.25rem; height: 1.25rem; }
+
+/* Tooltip do botão «Reiniciar o login»: por cima do botão e alinhado à direita (o tema base abre-o à direita e sai do ecrã no telemóvel). */
+.vj-card .kc-login-tooltip .kc-tooltip-text {
+  top: auto; bottom: calc(100% + 0.5rem); left: auto; right: 0; min-width: 0; white-space: nowrap;
+  padding: 0.375rem 0.625rem; border-radius: 0.375rem; background: var(--vj-navy); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  font-size: 0.75rem; font-weight: 500; line-height: 1rem;
+}
+.vj-card .kc-login-tooltip:hover .kc-tooltip-text { opacity: 1; }
+.vj-card .kc-login-tooltip .kc-tooltip-text::after { display: none; }

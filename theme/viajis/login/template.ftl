@@ -23,6 +23,15 @@
   </@field.group>
 </#macro>
 
+<#-- O lockup do Viajis, como na barra lateral da aplicação: o símbolo da Travel4Tech, «VIAJIS» e «by Travel4Tech». As imagens levam as dimensões no
+     HTML: com uma folha de estilos ainda em cache, nunca saem em tamanho natural. -->
+<#macro viajisLockup size>
+  <span class="vj-lockup vj-lockup-${size}">
+    <img class="vj-lockup-mark" src="${url.resourcesPath}/img/travel4tech.svg" alt="" width="${(size == 'lg')?then('36', '22')}" height="${(size == 'lg')?then('36', '22')}" />
+    <span class="vj-lockup-text"><span class="vj-lockup-name">VIAJIS</span><span class="vj-lockup-by">by Travel4Tech</span></span>
+  </span>
+</#macro>
+
 <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayRequiredFields=false>
 <!DOCTYPE html>
 <html class="${properties.kcHtmlClass!}" lang="${lang}"<#if realm.internationalizationEnabled> dir="${(locale.rtl)?then('rtl','ltr')}"</#if>>
@@ -149,121 +158,120 @@
 </head>
 
 <body id="keycloak-bg" class="${properties.kcBodyClass!}" data-page-id="login-${pageId}">
+<#-- A marca da agência do endereço (marca-agencia-login D1-11): a organização do Keycloak que o Viajis sincroniza. Sem ela, a marca Viajis. -->
+<#assign vjAgencyName = (org.attributes["viajis_nome"][0])!"">
+<#assign vjAgencyLogo = (org.attributes["viajis_logotipo"][0])!"">
+<#if !vjAgencyLogo?starts_with("https://")><#assign vjAgencyLogo = ""></#if>
+<#assign vjAgency = vjAgencyName?has_content || vjAgencyLogo?has_content>
 <div class="vj-grid">
   <div class="vj-left">
-    <div class="vj-left-inner">
-      <#-- A marca da agência do endereço (marca-agencia-login D1-11): a organização do Keycloak que o Viajis sincroniza. Sem ela, «VIAJIS» como sempre. -->
-      <#assign vjAgencyName = (org.attributes["viajis_nome"][0])!"">
-      <#assign vjAgencyLogo = (org.attributes["viajis_logotipo"][0])!"">
-      <#if !vjAgencyLogo?starts_with("https://")><#assign vjAgencyLogo = ""></#if>
-      <#if vjAgencyName?has_content || vjAgencyLogo?has_content>
+    <header class="vj-top">
+      <#if vjAgency>
       <div class="vj-agency">
-        <#-- Um logotipo que não carrega sai; sem nome da agência, volta «VIAJIS» (a marca nunca fica vazia). -->
-        <#if vjAgencyLogo?has_content><img class="vj-agency-logo" src="${vjAgencyLogo}" alt="" onerror="var m=this.closest('.vj-left-inner');this.remove();if(!m.querySelector('.vj-agency-name'))m.querySelector('.vj-brand').hidden=false;" /></#if>
+        <#-- Um logotipo que não carrega sai; sem nome da agência, volta a marca Viajis (o topo nunca fica vazio). -->
+        <#if vjAgencyLogo?has_content><img class="vj-agency-logo" src="${vjAgencyLogo}" alt="" height="44" onerror="var t=this.closest('.vj-top');this.remove();if(!t.querySelector('.vj-agency-name'))t.querySelector('.vj-brand').hidden=false;" /></#if>
         <#if vjAgencyName?has_content><span class="vj-agency-name">${vjAgencyName}</span></#if>
       </div>
-      <span class="vj-brand" hidden>VIAJIS</span>
+      <span class="vj-brand" hidden><@viajisLockup size="lg"/></span>
       <#else>
-      <span class="vj-brand">VIAJIS</span>
+      <span class="vj-brand"><@viajisLockup size="lg"/></span>
       </#if>
-      <h1 class="vj-headline">${msg("viajisHeadline")}</h1>
-      <p class="vj-lead">${msg("viajisLead")}</p>
+    </header>
 
-      <div class="vj-card">
-        <main class="${properties.kcLoginMain!}">
-          <div class="${properties.kcLoginMainHeader!}">
-            <h2 class="vj-card-title" id="kc-page-title"><#nested "header"></h2>
-            <#if realm.internationalizationEnabled  && locale.supported?size gt 1>
-            <div class="${properties.kcLoginMainHeaderUtilities!}">
-              <div class="${properties.kcInputClass!}">
-                <select aria-label="${msg("languages")}" id="login-select-toggle" onchange="if (this.value) window.location.href=this.value">
-                  <#list locale.supported?sort_by("label") as l>
-                    <option value="${l.url}" ${(l.languageTag == locale.currentLanguageTag)?then('selected','')}>${l.label}</option>
-                  </#list>
-                </select>
+    <div class="vj-form-area">
+      <main class="vj-card ${properties.kcLoginMain!}">
+        <div class="${properties.kcLoginMainHeader!}">
+          <h1 class="vj-card-title" id="kc-page-title"><#nested "header"></h1>
+          <#if pageId == "login" || pageId == "login-username"><p class="vj-lead">${msg("viajisLead")}</p></#if>
+        </div>
+        <div class="${properties.kcLoginMainBody!}">
+          <#if displayRequiredFields>
+              <div class="${properties.kcContentWrapperClass!}">
+                  <div class="${properties.kcLabelWrapperClass!} subtitle">
+                      <span class="${properties.kcInputHelperTextItemTextClass!}">
+                        <span class="${properties.kcInputRequiredClass!}">*</span> ${msg("requiredFields")}
+                      </span>
+                  </div>
               </div>
-            </div>
-            </#if>
-          </div>
-          <div class="${properties.kcLoginMainBody!}">
-            <#if displayRequiredFields>
-                <div class="${properties.kcContentWrapperClass!}">
-                    <div class="${properties.kcLabelWrapperClass!} subtitle">
-                        <span class="${properties.kcInputHelperTextItemTextClass!}">
-                          <span class="${properties.kcInputRequiredClass!}">*</span> ${msg("requiredFields")}
-                        </span>
-                    </div>
-                </div>
-            </#if>
-            <#if auth?has_content && auth.showUsername() && !auth.showResetCredentials()>
-                <div class="${properties.kcFormClass} ${properties.kcContentWrapperClass}">
-                  <#nested "show-username">
-                  <@username />
-                </div>
-            </#if>
+          </#if>
+          <#if auth?has_content && auth.showUsername() && !auth.showResetCredentials()>
+              <div class="${properties.kcFormClass} ${properties.kcContentWrapperClass}">
+                <#nested "show-username">
+                <@username />
+              </div>
+          </#if>
 
-            <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
-                <div class="vj-alert vj-alert-${message.type}" role="alert">
-                    <span class="${properties.kcAlertTitleClass!} kc-feedback-text">${message.summary}</span>
-                </div>
-            </#if>
+          <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
+              <div class="vj-alert vj-alert-${message.type}" role="alert">
+                  <span class="${properties.kcAlertTitleClass!} kc-feedback-text">${message.summary}</span>
+              </div>
+          </#if>
 
-            <#nested "form">
+          <#nested "form">
 
-            <#if auth?has_content && auth.showTryAnotherWayLink()>
-              <form id="kc-select-try-another-way-form" action="${url.loginAction}" method="post" novalidate="novalidate">
-                  <input type="hidden" name="tryAnotherWay" value="on"/>
-                  <a id="try-another-way" href="javascript:document.forms['kc-select-try-another-way-form'].requestSubmit()"
-                      class="${properties.kcButtonSecondaryClass} ${properties.kcButtonBlockClass} ${properties.kcMarginTopClass}">
-                        ${msg("doTryAnotherWay")}
-                  </a>
-              </form>
-            </#if>
+          <#if auth?has_content && auth.showTryAnotherWayLink()>
+            <form id="kc-select-try-another-way-form" action="${url.loginAction}" method="post" novalidate="novalidate">
+                <input type="hidden" name="tryAnotherWay" value="on"/>
+                <a id="try-another-way" href="javascript:document.forms['kc-select-try-another-way-form'].requestSubmit()"
+                    class="${properties.kcButtonSecondaryClass} ${properties.kcButtonBlockClass} ${properties.kcMarginTopClass}">
+                      ${msg("doTryAnotherWay")}
+                </a>
+            </form>
+          </#if>
 
-
-            <div class="${properties.kcLoginMainFooter!}">
-                <#-- Uma agência que só entra com email e senha (atributo login_apenas_senha=true na organização, posto à mão no Keycloak) não vê os
-                     botões dos fornecedores de identidade, como o Office 365. A sincronização do Viajis não mexe neste atributo. -->
-                <#if ((org.attributes["login_apenas_senha"][0])!"") != "true">
-                <#nested "socialProviders">
-                </#if>
-                <#if displayInfo>
-                    <div id="kc-info" class="${properties.kcLoginMainFooterBand!} ${properties.kcFormClass}">
-                        <div id="kc-info-wrapper" class="${properties.kcLoginMainFooterBandItem!}">
-                            <#nested "info">
-                        </div>
-                    </div>
-                </#if>
-            </div>
-          </div>
           <div class="${properties.kcLoginMainFooter!}">
-              <@loginFooter.content/>
+              <#-- Uma agência que só entra com email e senha (atributo login_apenas_senha=true na organização, posto à mão no Keycloak) não vê os
+                   botões dos fornecedores de identidade, como o Office 365. A sincronização do Viajis não mexe neste atributo. -->
+              <#if ((org.attributes["login_apenas_senha"][0])!"") != "true">
+              <#nested "socialProviders">
+              </#if>
+              <#if displayInfo>
+                  <div id="kc-info" class="${properties.kcLoginMainFooterBand!} ${properties.kcFormClass}">
+                      <div id="kc-info-wrapper" class="${properties.kcLoginMainFooterBandItem!}">
+                          <#nested "info">
+                      </div>
+                  </div>
+              </#if>
           </div>
-        </main>
-      </div>
-      <#-- Nas páginas com a marca de uma agência, a assinatura da plataforma: «powered by Viajis» e o logotipo da Travel4Tech. -->
-      <#if vjAgencyName?has_content || vjAgencyLogo?has_content>
-      <div class="vj-powered">
-        <span>powered by</span>
-        <span class="vj-powered-viajis">VIAJIS</span>
-        <span class="vj-powered-sep" aria-hidden="true"></span>
-        <span class="vj-powered-t4t"><img src="${url.resourcesPath}/img/travel4tech.svg" alt="" /><span class="vj-powered-t4t-word">Travel4Tech</span></span>
-      </div>
-      </#if>
+        </div>
+        <div class="${properties.kcLoginMainFooter!}">
+            <@loginFooter.content/>
+        </div>
+      </main>
     </div>
+
+    <footer class="vj-bottom">
+      <#-- Nas páginas com a marca de uma agência, a assinatura da plataforma: «powered by» e o lockup do Viajis com o símbolo da Travel4Tech. -->
+      <#if vjAgency>
+      <span class="vj-powered"><span class="vj-powered-label">powered by</span><@viajisLockup size="sm"/></span>
+      <#else>
+      <span></span>
+      </#if>
+      <#if realm.internationalizationEnabled  && locale.supported?size gt 1>
+      <label class="vj-locale">
+        <select aria-label="${msg("languages")}" id="login-select-toggle" onchange="if (this.value) window.location.href=this.value">
+          <#list locale.supported?sort_by("label") as l>
+            <option value="${l.url}" ${(l.languageTag == locale.currentLanguageTag)?then('selected','')}>${l.label}</option>
+          </#list>
+        </select>
+        <svg class="vj-locale-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </label>
+      </#if>
+    </footer>
   </div>
 
-  <div class="vj-right" aria-hidden="false">
-    <img class="vj-right-img" src="${url.resourcesPath}/img/japao-capa.jpg" alt="" aria-hidden="true" />
-    <div class="vj-right-overlay" aria-hidden="true"></div>
+  <aside class="vj-right" aria-hidden="true">
+    <img class="vj-right-img" src="${url.resourcesPath}/img/japao-capa.jpg" alt="" />
+    <div class="vj-right-overlay"></div>
     <div class="vj-right-content">
+      <p class="vj-right-headline">${msg("viajisHeadline")}</p>
       <ul class="vj-bullets">
-        <li>${msg("viajisBullet1")}</li>
-        <li>${msg("viajisBullet2")}</li>
-        <li>${msg("viajisBullet3")}</li>
+        <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>${msg("viajisBullet1")}</li>
+        <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>${msg("viajisBullet2")}</li>
+        <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>${msg("viajisBullet3")}</li>
       </ul>
     </div>
-  </div>
+  </aside>
 </div>
 </body>
 </html>
