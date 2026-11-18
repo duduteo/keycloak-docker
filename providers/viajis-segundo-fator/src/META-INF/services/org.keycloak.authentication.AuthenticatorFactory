@@ -1,1 +1,2 @@
 pt.viajis.keycloak.EscolherSegundoFatorAuthenticatorFactory
+pt.viajis.keycloak.SugerirPasskeyAuthenticatorFactory

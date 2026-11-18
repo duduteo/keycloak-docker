@@ -36,13 +36,17 @@ public class EscolherSegundoFatorAuthenticator implements Authenticator {
         if (TOTP.equals(escolha)) {
             context.getAuthenticationSession().addRequiredAction(UserModel.RequiredAction.CONFIGURE_TOTP);
         } else if (WEBAUTHN.equals(escolha)) {
-            context.getAuthenticationSession().addRequiredAction("webauthn-register");
+            // A chave de acesso (passkey) sem senha: a pessoa passa a entrar só com o email e a impressão digital, o rosto ou o PIN.
+            context.getAuthenticationSession().addRequiredAction("webauthn-register-passwordless");
+            AcoesPasskey.priorizarSeRegistada(context);
         } else {
             // Sem escolha (ou valor desconhecido): mostra a página de novo. Nunca avança sem registar um segundo fator.
             Response again = context.form().createForm(PAGE);
             context.challenge(again);
             return;
         }
+        // Quem acabou de escolher não recebe o convite da passkey no mesmo início de sessão (ver SugerirPasskeyAuthenticator).
+        context.getAuthenticationSession().setAuthNote(SugerirPasskeyAuthenticator.NOTA_ACABOU_DE_ESCOLHER, "true");
         context.success();
     }
 
